@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#00BFFF</color>
+    <color name="colorPrimaryDark">#BDBDBD</color>
+    <color name="colorAccent">#00BFFF</color>
+    <color name="activeNavColor">#000</color>
+    <color name="inactiveNavColor">#BDBDBD</color>
+    <color name="textColor">#585858</color>
+    <color name="appColor">#58D3F7</color>
+    <color name="buttonColor">#00FFFF</color>
+
+
+</resources>
