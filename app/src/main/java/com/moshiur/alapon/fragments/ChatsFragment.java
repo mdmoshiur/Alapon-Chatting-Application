@@ -16,16 +16,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.moshiur.alapon.R;
+import com.moshiur.alapon.activities.ConversationActivity;
 import com.moshiur.alapon.activities.ProfileActivity;
 import com.moshiur.alapon.adapters.ChatsRecyclerViewAdapter;
-import com.moshiur.alapon.models.LastMessageNode;
+import com.moshiur.alapon.models.LastMessageDataModel;
 import com.moshiur.alapon.utils.VerticalSpaceItemDecoration;
 
 import java.util.ArrayList;
 
 public class ChatsFragment extends Fragment {
 
-    ArrayList<LastMessageNode> mLastMessageNodes = new ArrayList<>();
+    ArrayList<LastMessageDataModel> mLastMessageDataModels = new ArrayList<>();
     private RecyclerView chatsRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private ChatsRecyclerViewAdapter chatsRecyclerViewAdapter;
@@ -44,7 +45,7 @@ public class ChatsFragment extends Fragment {
         toolbar.setTitle("");
 
         //add onclick listener to profile image
-        ImageView profileImage = toolbar.findViewById(R.id.toolbar_image);
+        ImageView profileImage = toolbar.findViewById(R.id.profile_image_conversation_toolbar);
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,24 +63,31 @@ public class ChatsFragment extends Fragment {
         //add item decoration
         chatsRecyclerView.addItemDecoration(new VerticalSpaceItemDecoration(50));
 
-        mLastMessageNodes.add(new LastMessageNode(R.drawable.image, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
-        mLastMessageNodes.add(new LastMessageNode(R.mipmap.ic_launcher, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
-        mLastMessageNodes.add(new LastMessageNode(R.drawable.applogo, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
-        mLastMessageNodes.add(new LastMessageNode(R.drawable.image, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
-        mLastMessageNodes.add(new LastMessageNode(R.mipmap.ic_launcher, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
-        mLastMessageNodes.add(new LastMessageNode(R.drawable.applogo, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
-        mLastMessageNodes.add(new LastMessageNode(R.drawable.image, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
-        mLastMessageNodes.add(new LastMessageNode(R.mipmap.ic_launcher, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
-        mLastMessageNodes.add(new LastMessageNode(R.drawable.applogo, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
-        mLastMessageNodes.add(new LastMessageNode(R.drawable.image, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
-        mLastMessageNodes.add(new LastMessageNode(R.mipmap.ic_launcher, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
-        mLastMessageNodes.add(new LastMessageNode(R.drawable.applogo, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
-        mLastMessageNodes.add(new LastMessageNode(R.drawable.image, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
-        mLastMessageNodes.add(new LastMessageNode(R.mipmap.ic_launcher, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
-        mLastMessageNodes.add(new LastMessageNode(R.drawable.applogo, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
+        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.image, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
+        mLastMessageDataModels.add(new LastMessageDataModel(R.mipmap.ic_launcher, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
+        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.applogo, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
+        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.image, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
+        mLastMessageDataModels.add(new LastMessageDataModel(R.mipmap.ic_launcher, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
+        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.applogo, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
+        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.image, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
+        mLastMessageDataModels.add(new LastMessageDataModel(R.mipmap.ic_launcher, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
+        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.applogo, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
+        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.image, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
+        mLastMessageDataModels.add(new LastMessageDataModel(R.mipmap.ic_launcher, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
+        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.applogo, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
+        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.image, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
+        mLastMessageDataModels.add(new LastMessageDataModel(R.mipmap.ic_launcher, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
+        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.applogo, "Md Moshiur Rahman", "hello hi bye bye", "11/11/11"));
 
-        chatsRecyclerViewAdapter = new ChatsRecyclerViewAdapter(mLastMessageNodes);
+        chatsRecyclerViewAdapter = new ChatsRecyclerViewAdapter(mLastMessageDataModels);
         chatsRecyclerView.setAdapter(chatsRecyclerViewAdapter);
+
+        chatsRecyclerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), ConversationActivity.class));
+            }
+        });
 
         return chatsFragment;
     }

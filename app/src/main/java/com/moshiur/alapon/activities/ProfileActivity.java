@@ -16,10 +16,10 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        //set chats_toolbar
+        //set people_toolbar
         Toolbar toolbar = findViewById(R.id.profile_toolbar);
         setSupportActionBar(toolbar);
-        //remove appname
+        //remove app name
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setTitle("");
 
