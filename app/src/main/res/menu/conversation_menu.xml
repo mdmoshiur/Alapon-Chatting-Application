@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/conversation_search_bar"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="Search in Conversation"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/conversation_name"
+        android:title="Set Nickname" />
+
+    <item
+        android:id="@+id/clear_chat"
+        android:title="Clear Chat" />
+
+    <item
+        android:id="@+id/notification"
+        android:title="Notification">
+
+        <menu>
+            <item
+                android:id="@+id/notification_on"
+                android:title="On" />
+            <item
+                android:id="@+id/notification_of"
+                android:title="Off" />
+        </menu>
+
+    </item>
+
+    <item
+        android:id="@+id/change_chat_color"
+        android:title="Change Chat Color" />
+    <item
+        android:id="@+id/ignore_message"
+        android:title="Ignore Message" />
+    <item
+        android:id="@+id/block"
+        android:title="Block" />
+
+</menu>

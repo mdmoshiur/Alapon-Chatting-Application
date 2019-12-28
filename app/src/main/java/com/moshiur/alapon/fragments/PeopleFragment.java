@@ -96,14 +96,12 @@ public class PeopleFragment extends Fragment {
         peopleRecyclerViewAdapter.setOnItemClickListener(new MyOnItemClickListener() {
             @Override
             public void OnItemClickListener(int position) {
-                Toast.makeText(getContext(), "position: " + position, Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(getContext(), ConversationActivity.class));
             }
 
             @Override
             public void OnItemLongClickListener(int position) {
                 Toast.makeText(getContext(), "position: " + position, Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getContext(), ConversationActivity.class));
             }
         });
 

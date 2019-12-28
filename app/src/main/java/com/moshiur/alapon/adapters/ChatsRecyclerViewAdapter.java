@@ -10,11 +10,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.moshiur.alapon.R;
+import com.moshiur.alapon.interfaces.MyOnItemClickListener;
 import com.moshiur.alapon.models.LastMessageDataModel;
 
 import java.util.ArrayList;
 
 public class ChatsRecyclerViewAdapter extends RecyclerView.Adapter<ChatsRecyclerViewAdapter.ChatsRecyclerViewHolder> {
+
+    private MyOnItemClickListener myOnItemClickListener;
 
     ArrayList<LastMessageDataModel> listData;
 
@@ -46,7 +49,12 @@ public class ChatsRecyclerViewAdapter extends RecyclerView.Adapter<ChatsRecycler
         return listData.size();
     }
 
-    public static class ChatsRecyclerViewHolder extends RecyclerView.ViewHolder {
+    //listener interface
+    public void setOnItemClickListener(MyOnItemClickListener listener) {
+        this.myOnItemClickListener = listener;
+    }
+
+    public class ChatsRecyclerViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView imageView;
         public TextView nameView;
@@ -60,6 +68,21 @@ public class ChatsRecyclerViewAdapter extends RecyclerView.Adapter<ChatsRecycler
             nameView = itemView.findViewById(R.id.name_id_last_message_layout);
             lastMessageView = itemView.findViewById(R.id.message_id_last_message_layout);
             lastMessageTimeView = itemView.findViewById(R.id.last_message_time_id_last_message_layout);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    myOnItemClickListener.OnItemClickListener(position);
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    myOnItemClickListener.OnItemLongClickListener(getAdapterPosition());
+                    return false;
+                }
+            });
 
         }
     }

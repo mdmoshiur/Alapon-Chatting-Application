@@ -46,6 +46,8 @@ public class PeopleRecyclerViewAdapter extends RecyclerView.Adapter<PeopleRecycl
         return listData.size();
     }
 
+
+    //listener interface
     public void setOnItemClickListener(MyOnItemClickListener listener) {
         this.myOnItemClickListener = listener;
     }
@@ -66,7 +68,13 @@ public class PeopleRecyclerViewAdapter extends RecyclerView.Adapter<PeopleRecycl
                 public void onClick(View v) {
                     int position = getAdapterPosition();
                     myOnItemClickListener.OnItemClickListener(position);
-                    myOnItemClickListener.OnItemLongClickListener(position);
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    myOnItemClickListener.OnItemLongClickListener(getAdapterPosition());
+                    return false;
                 }
             });
         }

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <TextView
+        android:id="@+id/chat_item_left_message_time_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="26dp"
+        android:text="8.11 pm"
+        android:textSize="16sp"
+        android:textStyle="italic"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@+id/chat_item_left_message_id"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/chat_item_left_profile_image_id"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chat_item_left_message_time_id" />
+
+    <TextView
+        android:id="@+id/chat_item_left_message_id"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/chat_item_left_backgroud"
+        android:padding="16dp"
+        android:text="hello baal ekta, eto time nosto koris na. samne onek kharap time ashtese. ar eto class miss dish naa"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="italic"
+        app:layout_constraintStart_toEndOf="@+id/chat_item_left_profile_image_id"
+        app:layout_constraintTop_toBottomOf="@+id/chat_item_left_message_time_id"
+        app:layout_constraintWidth_percent=".65" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

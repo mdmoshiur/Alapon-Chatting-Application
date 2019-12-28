@@ -10,6 +10,7 @@
     <color name="buttonColor">#00FFFF</color>
     <color name="lightGray">#F2F2F2</color>
     <color name="conversationToolbarIconColor">#0040FF</color>
+    <color name="skyColor">#A9E2F3</color>
 
 
 </resources>
