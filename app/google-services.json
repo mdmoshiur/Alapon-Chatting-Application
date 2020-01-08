@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "555175144670",
+    "firebase_url": "https://alapon-3d215.firebaseio.com",
+    "project_id": "alapon-3d215",
+    "storage_bucket": "alapon-3d215.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:555175144670:android:df310f362ea38279e7a64f",
+        "android_client_info": {
+          "package_name": "com.moshiur.alapon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "555175144670-6gf3bu3kl5polvs50su5ht3splvignkp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.moshiur.alapon",
+            "certificate_hash": "5076ce51c889606e272fecf3983da1126aa10e09"
+          }
+        },
+        {
+          "client_id": "555175144670-bmr80vv9cu33789l2d53k7e3l63u3he1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlWTwxYRGD4TzPOTGq1cf1nYuufrA3fQA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "555175144670-bmr80vv9cu33789l2d53k7e3l63u3he1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
