@@ -19,17 +19,27 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.moshiur.alapon.R;
 import com.moshiur.alapon.activities.ConversationActivity;
 import com.moshiur.alapon.activities.ProfileActivity;
 import com.moshiur.alapon.adapters.PeopleRecyclerViewAdapter;
 import com.moshiur.alapon.interfaces.MyOnItemClickListener;
 import com.moshiur.alapon.models.PeopleDataModel;
+import com.moshiur.alapon.models.UserDataModel;
 import com.moshiur.alapon.utils.VerticalSpaceItemDecoration;
 
 import java.util.ArrayList;
 
 public class PeopleFragment extends Fragment {
+
+    private static final String TAG = "PeopleFragment";
 
     private View peopleFragment;
     private Toolbar toolbar;
@@ -90,7 +100,11 @@ public class PeopleFragment extends Fragment {
         peopleRecyclerViewAdapter.setOnItemClickListener(new MyOnItemClickListener() {
             @Override
             public void OnItemClickListener(int position) {
-                startActivity(new Intent(getContext(), ConversationActivity.class));
+                Intent intent = new Intent(getContext(), ConversationActivity.class);
+                intent.putExtra("userID", mPeopleDataModel.get(position).getUserID());
+                intent.putExtra("userName", mPeopleDataModel.get(position).getName());
+                intent.putExtra("userProfileImageURL", mPeopleDataModel.get(position).getImageURL());
+                startActivity(intent);
             }
 
             @Override
@@ -110,7 +124,7 @@ public class PeopleFragment extends Fragment {
         peopleRecyclerView.setLayoutManager(layoutManager);
 
         //set adapter
-        peopleRecyclerViewAdapter = new PeopleRecyclerViewAdapter(mPeopleDataModel);
+        peopleRecyclerViewAdapter = new PeopleRecyclerViewAdapter(getContext(), mPeopleDataModel);
         peopleRecyclerView.setAdapter(peopleRecyclerViewAdapter);
         //add item decoration
         peopleRecyclerView.addItemDecoration(new VerticalSpaceItemDecoration(45));
@@ -118,22 +132,29 @@ public class PeopleFragment extends Fragment {
 
     private void recyclerViewDataPreparation() {
         //data prep
-        mPeopleDataModel.add(new PeopleDataModel(R.drawable.image, "Md Moshiur Rahman"));
-        mPeopleDataModel.add(new PeopleDataModel(R.drawable.applogo, "Md Moshiur Rahman"));
-        mPeopleDataModel.add(new PeopleDataModel(R.mipmap.ic_launcher, "Md Moshiur Rahman"));
-        mPeopleDataModel.add(new PeopleDataModel(R.drawable.ic_people_black_24dp, "Md Moshiur Rahman"));
-        mPeopleDataModel.add(new PeopleDataModel(R.drawable.image, "Md Moshiur Rahman"));
-        mPeopleDataModel.add(new PeopleDataModel(R.drawable.applogo, "Md Moshiur Rahman"));
-        mPeopleDataModel.add(new PeopleDataModel(R.mipmap.ic_launcher, "Md Moshiur Rahman"));
-        mPeopleDataModel.add(new PeopleDataModel(R.drawable.ic_people_black_24dp, "Md Moshiur Rahman"));
-        mPeopleDataModel.add(new PeopleDataModel(R.drawable.image, "Md Moshiur Rahman"));
-        mPeopleDataModel.add(new PeopleDataModel(R.drawable.applogo, "Md Moshiur Rahman"));
-        mPeopleDataModel.add(new PeopleDataModel(R.mipmap.ic_launcher, "Md Moshiur Rahman"));
-        mPeopleDataModel.add(new PeopleDataModel(R.drawable.ic_people_black_24dp, "Md Moshiur Rahman"));
-        mPeopleDataModel.add(new PeopleDataModel(R.drawable.image, "Md Moshiur Rahman"));
-        mPeopleDataModel.add(new PeopleDataModel(R.drawable.applogo, "Md Moshiur Rahman"));
-        mPeopleDataModel.add(new PeopleDataModel(R.mipmap.ic_launcher, "Md Moshiur Rahman"));
-        mPeopleDataModel.add(new PeopleDataModel(R.drawable.ic_people_black_24dp, "Md Moshiur Rahman"));
+        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                        UserDataModel user = snapshot.getValue(UserDataModel.class);
+                        assert user != null;
+                        assert firebaseUser != null;
+                        //Log.d(TAG, "onDataChange:  userName"+user.getUserName());
+                        mPeopleDataModel.add(new PeopleDataModel(user.getUserID(), user.getUserName(), user.getUserProfileImageURL()));
+                    }
+                    peopleRecyclerViewAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void handleToolbarMenu() {

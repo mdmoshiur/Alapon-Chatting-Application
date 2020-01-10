@@ -1,20 +1,26 @@
 package com.moshiur.alapon.models;
 
 public class PeopleDataModel {
-    private int image;
+    private String userID;
+    private String imageURL;
     private String name;
 
     public PeopleDataModel() {
         //empty constructor
     }
 
-    public PeopleDataModel(int image, String name) {
-        this.image = image;
+    public PeopleDataModel(String userID, String name, String imageURL) {
+        this.userID = userID;
         this.name = name;
+        this.imageURL = imageURL;
     }
 
-    public int getImage() {
-        return image;
+    public String getUserID() {
+        return userID;
+    }
+
+    public String getImageURL() {
+        return imageURL;
     }
 
     public String getName() {

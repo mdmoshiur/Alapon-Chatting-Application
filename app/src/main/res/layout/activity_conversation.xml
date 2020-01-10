@@ -10,6 +10,16 @@
         android:id="@+id/conversation_toolbar"
         layout="@layout/conversation_toolbar" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/conversation_message_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/conversation_type_message_layout_id"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/conversation_toolbar" />
+
+
     <include
         android:id="@+id/conversation_type_message_layout_id"
         layout="@layout/type_message_layout"
@@ -19,32 +29,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <include
-        android:id="@+id/message1"
-        layout="@layout/chat_item_left_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/conversation_toolbar" />
-
-    <include
-        android:id="@+id/message2"
-        layout="@layout/chat_item_right_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/message1" />
-
-    <include
-        android:id="@+id/message3"
-        layout="@layout/chat_item_left_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/message2" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 package com.moshiur.alapon.adapters;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.moshiur.alapon.R;
 import com.moshiur.alapon.interfaces.MyOnItemClickListener;
 import com.moshiur.alapon.models.PeopleDataModel;
@@ -17,12 +19,14 @@ import java.util.ArrayList;
 
 public class PeopleRecyclerViewAdapter extends RecyclerView.Adapter<PeopleRecyclerViewAdapter.PeopleRecyclerViewHolder> {
 
-    ArrayList<PeopleDataModel> listData;
+    private Context mContext;
+    private ArrayList<PeopleDataModel> listData;
     //interface variable
     private MyOnItemClickListener myOnItemClickListener;
 
-    public PeopleRecyclerViewAdapter(ArrayList<PeopleDataModel> peopleDataModels) {
+    public PeopleRecyclerViewAdapter(Context context, ArrayList<PeopleDataModel> peopleDataModels) {
         this.listData = peopleDataModels;
+        this.mContext = context;
     }
 
     @NonNull
@@ -36,7 +40,11 @@ public class PeopleRecyclerViewAdapter extends RecyclerView.Adapter<PeopleRecycl
     public void onBindViewHolder(@NonNull PeopleRecyclerViewHolder holder, int position) {
         PeopleDataModel peopleDataModel = listData.get(position);
 
-        holder.imageView.setImageResource(peopleDataModel.getImage());
+        if (peopleDataModel.getImageURL().equals("default")) {
+            holder.imageView.setImageResource(R.mipmap.ic_launcher);
+        } else {
+            Glide.with(mContext).load(peopleDataModel.getImageURL()).into(holder.imageView);
+        }
         holder.nameView.setText(peopleDataModel.getName());
 
     }

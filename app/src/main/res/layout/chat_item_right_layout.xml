@@ -5,19 +5,19 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/chat_item_right_message_time_id"
+        android:id="@+id/message_time_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="26dp"
         android:text="8.11 pm"
         android:textSize="14sp"
         android:textStyle="italic"
-        android:visibility="visible"
-        app:layout_constraintStart_toStartOf="@+id/chat_item_right_message_id"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/message_id"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/chat_item_right_message_id"
+        android:id="@+id/message_id"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -26,13 +26,14 @@
         android:text="hello baal ekta, eto time nosto koris na. samne onek kharap time ashtese. ar eto class miss dish naa"
         android:textColor="@android:color/white"
         android:textSize="16sp"
-        android:textStyle="italic"
-        app:layout_constraintRight_toLeftOf="@+id/message_sent_checkbox_id"
-        app:layout_constraintTop_toBottomOf="@+id/chat_item_right_message_time_id"
+        android:textStyle="normal"
+        app:layout_constraintRight_toLeftOf="@+id/message_sent_id"
+        app:layout_constraintTop_toBottomOf="@+id/message_time_id"
+        app:layout_constraintWidth_max="wrap"
         app:layout_constraintWidth_percent=".70" />
 
     <TextView
-        android:id="@+id/chat_item_right_message_seen_id"
+        android:id="@+id/message_seen_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -43,20 +44,20 @@
         android:text="seen"
         android:textSize="14sp"
         android:textStyle="italic"
-        app:layout_constraintEnd_toEndOf="@+id/chat_item_right_message_id"
-        app:layout_constraintTop_toBottomOf="@+id/chat_item_right_message_id" />
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/message_id"
+        app:layout_constraintTop_toBottomOf="@+id/message_id" />
 
 
-    <CheckBox
-        android:id="@+id/message_sent_checkbox_id"
+    <ImageView
+        android:id="@+id/message_sent_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="2dp"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/message_sent_checkbox_selector"
-        android:button="@null"
+        android:src="@drawable/ic_check_circle_black_24dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/chat_item_right_message_id"
+        app:layout_constraintBottom_toBottomOf="@+id/message_id"
         app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

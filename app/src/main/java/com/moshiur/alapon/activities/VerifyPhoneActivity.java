@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.moshiur.alapon.R;
 import com.moshiur.alapon.models.UserDataModel;
 
@@ -46,6 +47,36 @@ public class VerifyPhoneActivity extends AppCompatActivity {
     private String verifyCode;
 
     private DatabaseReference mDatabaseReference;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_verify_phone);
+
+        setToolbar();
+        toolbarButtonHandler();
+
+        getIntentData();
+
+        initializeUI();
+
+        setUIData();
+
+        mAuth = FirebaseAuth.getInstance();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
+        sendVerificationCode(phone_number);
+
+        verifyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                verifyVerificationCode(verifyCode);
+            }
+        });
+
+    }
+
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
         @Override
@@ -68,7 +99,6 @@ public class VerifyPhoneActivity extends AppCompatActivity {
             if (verifyCode != null) {
                 codeEditText.setText(verifyCode);
             }
-
 
             signInWithPhoneAuthCredential(credential);
         }
@@ -107,33 +137,6 @@ public class VerifyPhoneActivity extends AppCompatActivity {
         }
     };
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_verify_phone);
-
-        setToolbar();
-        toolbarButtonHandler();
-
-        getIntentData();
-
-        initializeUI();
-
-        setUIData();
-
-        mAuth = FirebaseAuth.getInstance();
-
-        sendVerificationCode(phone_number);
-
-        verifyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                verifyVerificationCode(verifyCode);
-            }
-        });
-
-    }
-
     private void sendVerificationCode(String phoneNumber) {
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,        // Phone number to verify
@@ -151,6 +154,10 @@ public class VerifyPhoneActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
+
+                            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                            UserDataModel userDataModel = new UserDataModel(userId, user_name, phone_number, password, "default");
+                            writeNewUser(userDataModel);
 
                             //verification successful we will start the profile activity
                             Intent intent = new Intent(VerifyPhoneActivity.this, MainActivity.class);

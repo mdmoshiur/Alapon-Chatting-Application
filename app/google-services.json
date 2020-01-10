@@ -8,14 +8,14 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:555175144670:android:df310f362ea38279e7a64f",
+        "mobilesdk_app_id": "1:555175144670:android:6f62ac0552033f71e7a64f",
         "android_client_info": {
           "package_name": "com.moshiur.alapon"
         }
       },
       "oauth_client": [
         {
-          "client_id": "555175144670-6gf3bu3kl5polvs50su5ht3splvignkp.apps.googleusercontent.com",
+          "client_id": "555175144670-iv69dt52i4n3p3knlde1cqkitjmf7hq6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.moshiur.alapon",

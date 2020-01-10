@@ -3,4 +3,8 @@
     <string name="title_chats">Chats</string>
     <string name="title_people">People</string>
     <string name="title_notifications">Notifications</string>
+    <!--for facebook login-->
+    <string name="facebook_app_id">511478229478839</string>
+    <string name="fb_login_protocol_scheme">fb511478229478839</string>
+
 </resources>
