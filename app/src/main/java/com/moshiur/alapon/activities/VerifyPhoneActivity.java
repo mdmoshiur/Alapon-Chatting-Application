@@ -13,20 +13,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.moshiur.alapon.R;
 import com.moshiur.alapon.models.UserDataModel;
+import com.moshiur.alapon.network.FirebaseHelper;
 
 import java.util.concurrent.TimeUnit;
 
@@ -39,7 +42,6 @@ public class VerifyPhoneActivity extends AppCompatActivity {
 
     private String phone_number;
     private String user_name;
-    private String password;
 
     private FirebaseAuth mAuth;
     private String mVerificationId;
@@ -155,9 +157,26 @@ public class VerifyPhoneActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
 
-                            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                            UserDataModel userDataModel = new UserDataModel(userId, user_name, phone_number, password, "default");
-                            writeNewUser(userDataModel);
+                            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                            // check user previously  logged in or not
+                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
+                            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (!dataSnapshot.exists()) {
+                                        UserDataModel userDataModel = new UserDataModel(user.getUid(), user_name, phone_number, "default");
+
+                                        FirebaseHelper firebaseHelper = new FirebaseHelper();
+                                        firebaseHelper.signUpNewUser(userDataModel);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
 
                             //verification successful we will start the profile activity
                             Intent intent = new Intent(VerifyPhoneActivity.this, MainActivity.class);
@@ -173,23 +192,6 @@ public class VerifyPhoneActivity extends AppCompatActivity {
                                 // The verification code entered was invalid
                             }
                         }
-                    }
-                });
-    }
-
-    private void writeNewUser(UserDataModel userDataModel) {
-        mDatabaseReference.child("users").child(userDataModel.getUserID()).setValue(userDataModel)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        //write successful
-                        Log.d(TAG, "onSuccess: user registration is successful");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "onFailure: user registration is failed");
                     }
                 });
     }
@@ -210,8 +212,6 @@ public class VerifyPhoneActivity extends AppCompatActivity {
         Intent intent = getIntent();
         phone_number = intent.getStringExtra("phone_number");
         user_name = intent.getStringExtra("user_name");
-        password = intent.getStringExtra("password");
-
     }
 
     private void initializeUI() {

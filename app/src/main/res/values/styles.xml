@@ -40,4 +40,9 @@
         <item name="android:backgroundTint">@color/inactiveNavColor</item>
     </style>
 
+    <!--theme for progressbar-->
+    <style name="AppTheme.White">
+        <item name="colorAccent">@android:color/white</item>
+    </style>
+
 </resources>

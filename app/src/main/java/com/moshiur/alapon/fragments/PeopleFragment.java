@@ -19,7 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,6 +43,7 @@ public class PeopleFragment extends Fragment {
 
     private View peopleFragment;
     private Toolbar toolbar;
+    private static final String USER_DATA_MODEL = "userDataModel";
 
     private Button allButton, activeButton;
 
@@ -51,15 +52,36 @@ public class PeopleFragment extends Fragment {
     private RecyclerView peopleRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private PeopleRecyclerViewAdapter peopleRecyclerViewAdapter;
+    private ImageView profileImage;
+    private FirebaseUser firebaseUser;
+    private DatabaseReference databaseReference;
+    private UserDataModel currentUser = new UserDataModel();
+
+    public static PeopleFragment newInstance(UserDataModel userDataModel) {
+
+        PeopleFragment mPeopleFragment = new PeopleFragment();
+
+        Bundle args = new Bundle();
+        args.putParcelable(USER_DATA_MODEL, userDataModel);
+        mPeopleFragment.setArguments(args);
+
+        return mPeopleFragment;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         peopleFragment = inflater.inflate(R.layout.fragment_people, container, false);
+
+        //get fragment data
+        if (getArguments() != null) {
+            currentUser = getArguments().getParcelable(USER_DATA_MODEL);
+        }
         //for menu
         setHasOptionsMenu(true);
         setToolbar(); //set peoples_toolbar
+
         handleToolbarMenu();
         handleButtons();
         recyclerViewDataPreparation();
@@ -68,6 +90,7 @@ public class PeopleFragment extends Fragment {
 
         return peopleFragment;
     }
+
 
     private void handleButtons() {
         allButton = peopleFragment.findViewById(R.id.all_button);
@@ -132,7 +155,6 @@ public class PeopleFragment extends Fragment {
 
     private void recyclerViewDataPreparation() {
         //data prep
-        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -144,7 +166,7 @@ public class PeopleFragment extends Fragment {
                         assert user != null;
                         assert firebaseUser != null;
                         //Log.d(TAG, "onDataChange:  userName"+user.getUserName());
-                        mPeopleDataModel.add(new PeopleDataModel(user.getUserID(), user.getUserName(), user.getUserProfileImageURL()));
+                        mPeopleDataModel.add(new PeopleDataModel(user.getUserID(), user.getUserName(), user.getUserProfilePhotoURL()));
                     }
                     peopleRecyclerViewAdapter.notifyDataSetChanged();
                 }
@@ -158,11 +180,20 @@ public class PeopleFragment extends Fragment {
     }
 
     private void handleToolbarMenu() {
-        ImageView profileImage = toolbar.findViewById(R.id.toolbar_image);
+        profileImage = toolbar.findViewById(R.id.toolbar_image);
+
+        if (currentUser.getUserProfilePhotoURL().equals("default")) {
+            profileImage.setImageResource(R.drawable.image);
+        } else {
+            Glide.with(PeopleFragment.this).load(currentUser.getUserProfilePhotoURL()).into(profileImage);
+        }
+
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getContext(), ProfileActivity.class));
+                Intent intent = new Intent(getContext(), ProfileActivity.class);
+                intent.putExtra("userDataModel", currentUser);
+                startActivity(intent);
             }
         });
     }

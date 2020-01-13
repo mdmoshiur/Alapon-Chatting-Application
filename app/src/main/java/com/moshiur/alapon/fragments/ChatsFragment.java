@@ -2,7 +2,6 @@ package com.moshiur.alapon.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.moshiur.alapon.R;
 import com.moshiur.alapon.activities.ConversationActivity;
 import com.moshiur.alapon.activities.ProfileActivity;
@@ -53,8 +46,21 @@ public class ChatsFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private ChatsRecyclerViewAdapter chatsRecyclerViewAdapter;
 
-    private FirebaseUser currentFirebaseUser;
     private DatabaseReference mDatabaseReference;
+
+    private static final String USER_DATA_MODEL = "userDataModel";
+    private UserDataModel currentUser;
+
+    public static ChatsFragment newInstance(UserDataModel userDataModel) {
+
+        ChatsFragment mChatFragment = new ChatsFragment();
+
+        Bundle args = new Bundle();
+        args.putParcelable(USER_DATA_MODEL, userDataModel);
+        mChatFragment.setArguments(args);
+
+        return mChatFragment;
+    }
 
     @Nullable
     @Override
@@ -62,16 +68,17 @@ public class ChatsFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         chatsFragment = inflater.inflate(R.layout.fragment_chats, container, false);
 
+        //get fragment data
+        if (getArguments() != null) {
+            currentUser = getArguments().getParcelable(USER_DATA_MODEL);
+        }
+
         //set chats_toolbar
         setToolbar();
 
-        setCurrentUser();
-
         initializeUI();
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            setChatsToolbarProfileImage();
-        }
+        setToolbarProfileImage();
 
         toolbarButtonHandler();
 
@@ -96,28 +103,8 @@ public class ChatsFragment extends Fragment {
         return chatsFragment;
     }
 
-    private void setChatsToolbarProfileImage() {
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference("users").child(currentFirebaseUser.getUid());
-        mDatabaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                UserDataModel user = dataSnapshot.getValue(UserDataModel.class);
 
-                if (user.getUserProfileImageURL().equals("default")) {
-                    profileImage.setImageResource(R.drawable.image);
-                } else {
-                    Glide.with(ChatsFragment.this).load(user.getUserProfileImageURL()).into(profileImage);
-                }
 
-                Log.d(TAG, "onDataChange: " + user.getUserName() + user.getUserPhoneNumber() + user.getUserPassword());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
 
     private void setChatsRecyclerView() {
         //find recyclerView
@@ -161,12 +148,22 @@ public class ChatsFragment extends Fragment {
         profileImage = toolbar.findViewById(R.id.profile_image_conversation_toolbar);
     }
 
+    private void setToolbarProfileImage() {
+        if (currentUser.getUserProfilePhotoURL().equals("default")) {
+            profileImage.setImageResource(R.drawable.image);
+        } else {
+            Glide.with(ChatsFragment.this).load(currentUser.getUserProfilePhotoURL()).into(profileImage);
+        }
+    }
+
     private void toolbarButtonHandler() {
         //add onclick listener to profile image
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getContext(), ProfileActivity.class));
+                Intent intent = new Intent(getContext(), ProfileActivity.class);
+                intent.putExtra("userDataModel", currentUser);
+                startActivity(intent);
             }
         });
     }
@@ -177,10 +174,6 @@ public class ChatsFragment extends Fragment {
         //remove appname
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setTitle("");
-    }
-
-    private void setCurrentUser() {
-        currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
 }

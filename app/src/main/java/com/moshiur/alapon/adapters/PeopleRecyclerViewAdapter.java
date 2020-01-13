@@ -41,7 +41,7 @@ public class PeopleRecyclerViewAdapter extends RecyclerView.Adapter<PeopleRecycl
         PeopleDataModel peopleDataModel = listData.get(position);
 
         if (peopleDataModel.getImageURL().equals("default")) {
-            holder.imageView.setImageResource(R.mipmap.ic_launcher);
+            holder.imageView.setImageResource(R.drawable.profile_icon);
         } else {
             Glide.with(mContext).load(peopleDataModel.getImageURL()).into(holder.imageView);
         }

@@ -15,20 +15,20 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.moshiur.alapon.R;
 
-public class SignUpActivity extends AppCompatActivity {
+public class PhoneNumberLogInActivity extends AppCompatActivity {
 
-    private static final String TAG = "SignUpActivity";
+    private static final String TAG = "PhoneNumberLogIn";
 
     private Toolbar toolbar;
-    private EditText name, phone, password;
-    private Button signupButton;
+    private EditText name, phone;
+    private Button logInButton;
 
     private String user_name, phone_no, pass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);
+        setContentView(R.layout.activity_phone_number_login);
 
         setToolbar();
         toolbarButtonHandler();
@@ -36,27 +36,25 @@ public class SignUpActivity extends AppCompatActivity {
         initializeUI();
 
 
-        signupButton.setOnClickListener(new View.OnClickListener() {
+        logInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 processEditTextInput();
                 Log.d(TAG, "onClick: " + user_name + phone_no + pass);
-                if (user_name.isEmpty() || user_name.length() <= 3) {
-                    name.setError("valid name is required!");
-                    name.setFocusable(true);
-                    name.requestFocus();
+                if (user_name.isEmpty()) {
+                    errorDialog("Name field is empty");
                     return;
-                } else if (phone_no.isEmpty() || phone_no.length() < 11) {
-                    phone.setError("phone number is not valid");
-                    phone.setFocusable(true);
-                    phone.requestFocus();
+                } else if (user_name.length() < 3) {
+                    errorDialog("Name contains minimum 3 letters");
                     return;
-                } else if (pass.isEmpty() || pass.length() < 6) {
-                    password.setError("password 6 or more chars");
-                    password.setFocusable(true);
-                    password.requestFocus();
+                } else if (phone_no.isEmpty()) {
+                    errorDialog("Phone number is empty");
+                    return;
+                } else if (phone_no.length() < 14) {
+                    errorDialog("Phone number is not valid!!\nplease try with country code");
                     return;
                 }
+
                 createConfirmDialog();
             }
         });
@@ -64,15 +62,14 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
+
     private void processEditTextInput() {
         user_name = name.getText().toString().trim();
         phone_no = phone.getText().toString().trim();
-        pass = password.getText().toString().trim();
-
     }
 
     private void createConfirmDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(PhoneNumberLogInActivity.this);
         View mView = getLayoutInflater().inflate(R.layout.verify_confirmation_alert_dialog, null);
         builder.setView(mView);
         final AlertDialog confirmDialog = builder.create();
@@ -96,22 +93,39 @@ public class SignUpActivity extends AppCompatActivity {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SignUpActivity.this, VerifyPhoneActivity.class);
+                Intent intent = new Intent(PhoneNumberLogInActivity.this, VerifyPhoneActivity.class);
                 intent.putExtra("user_name", user_name);
                 intent.putExtra("phone_number", phone_no);
-                intent.putExtra("password", pass);
-
                 startActivity(intent);
             }
         });
     }
 
+    private void errorDialog(String errorMessage) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(PhoneNumberLogInActivity.this);
+        View mView = getLayoutInflater().inflate(R.layout.error_message_dialog_layout, null);
+        TextView errorMessageTextView = mView.findViewById(R.id.error_message);
+        errorMessageTextView.setText(errorMessage);
+        Button okButton = mView.findViewById(R.id.error_dialog_ok_button);
+
+        builder.setView(mView);
+        final AlertDialog myErrorDialog = builder.create();
+        myErrorDialog.show();
+
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myErrorDialog.cancel();
+            }
+        });
+
+    }
+
     private void initializeUI() {
         name = findViewById(R.id.singnup_name_editText);
         phone = findViewById(R.id.login_phone_editText);
-        password = findViewById(R.id.signup_password_editText);
 
-        signupButton = findViewById(R.id.signUpButton);
+        logInButton = findViewById(R.id.signUpButton);
     }
 
     private void toolbarButtonHandler() {

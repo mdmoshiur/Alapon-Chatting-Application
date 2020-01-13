@@ -1,22 +1,42 @@
 package com.moshiur.alapon.models;
 
-public class UserDataModel {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class UserDataModel implements Parcelable {
     private String userID;
     private String userName;
-    private String userPassword;
-    private String userPhoneNumber;
-    private String userProfileImageURL;
+    public static final Creator<UserDataModel> CREATOR = new Creator<UserDataModel>() {
+        @Override
+        public UserDataModel createFromParcel(Parcel in) {
+            return new UserDataModel(in);
+        }
+
+        @Override
+        public UserDataModel[] newArray(int size) {
+            return new UserDataModel[size];
+        }
+    };
+    private String userEmailOrPhoneNumber;
 
     public UserDataModel() {
         //empty constructor
     }
 
-    public UserDataModel(String userID, String userName, String userPhoneNumber, String userPassword, String userProfileImageURL) {
+    private String userProfilePhotoURL;
+
+    public UserDataModel(String userID, String userName, String userEmailOrPhoneNumber, String userProfileImageURL) {
         this.userID = userID;
         this.userName = userName;
-        this.userPassword = userPassword;
-        this.userPhoneNumber = userPhoneNumber;
-        this.userProfileImageURL = userProfileImageURL;
+        this.userEmailOrPhoneNumber = userEmailOrPhoneNumber;
+        this.userProfilePhotoURL = userProfileImageURL;
+    }
+
+    protected UserDataModel(Parcel in) {
+        userID = in.readString();
+        userName = in.readString();
+        userEmailOrPhoneNumber = in.readString();
+        userProfilePhotoURL = in.readString();
     }
 
     public String getUserID() {
@@ -35,27 +55,32 @@ public class UserDataModel {
         this.userName = userName;
     }
 
-    public String getUserPassword() {
-        return userPassword;
+    public String getUserEmailOrPhoneNumber() {
+        return userEmailOrPhoneNumber;
     }
 
-    public void setUserPassword(String userPassword) {
-        this.userPassword = userPassword;
+    public void setUserEmailOrPhoneNumber(String userEmailOrPhoneNumber) {
+        this.userEmailOrPhoneNumber = userEmailOrPhoneNumber;
     }
 
-    public String getUserPhoneNumber() {
-        return userPhoneNumber;
+    public String getUserProfilePhotoURL() {
+        return userProfilePhotoURL;
     }
 
-    public void setUserPhoneNumber(String userPhoneNumber) {
-        this.userPhoneNumber = userPhoneNumber;
+    public void setUserProfilePhotoURL(String userProfilePhotoURL) {
+        this.userProfilePhotoURL = userProfilePhotoURL;
     }
 
-    public String getUserProfileImageURL() {
-        return userProfileImageURL;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public void setUserProfileImageURL(String userProfileImageURL) {
-        this.userProfileImageURL = userProfileImageURL;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(userID);
+        dest.writeString(userName);
+        dest.writeString(userEmailOrPhoneNumber);
+        dest.writeString(userProfilePhotoURL);
     }
 }

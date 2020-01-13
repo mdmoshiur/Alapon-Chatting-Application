@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.LogInActivity">
+    tools:context=".activities.PhoneNumberLogInActivity">
 
     <include
         android:id="@+id/signup_toolbar_id"
@@ -19,6 +19,7 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline5"
         app:layout_constraintStart_toStartOf="@+id/guideline4"
         app:layout_constraintTop_toTopOf="@+id/guideline5" />
+
 
     <EditText
         android:id="@+id/singnup_name_editText"
@@ -38,9 +39,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Phone"
+        android:text="Phone Number"
         app:layout_constraintStart_toStartOf="@+id/guideline4"
         app:layout_constraintTop_toBottomOf="@+id/singnup_name_editText" />
+
+    <TextView
+        android:id="@+id/country_code"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="* with country code"
+        android:textColor="@android:color/holo_red_light"
+        android:textSize="8sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toStartOf="@+id/guideline6"
+        app:layout_constraintStart_toStartOf="@+id/guideline4"
+        app:layout_constraintTop_toBottomOf="@id/textView" />
 
     <EditText
         android:id="@+id/login_phone_editText"
@@ -48,40 +61,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:ems="10"
+        android:hint="+880**********"
         android:inputType="phone"
         android:maxLines="1"
         app:layout_constraintEnd_toStartOf="@+id/guideline6"
         app:layout_constraintStart_toStartOf="@+id/guideline4"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/country_code" />
 
-    <TextView
-        android:id="@+id/textView2"
-        style="@style/FieldHeaderTextStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Password"
-        app:layout_constraintStart_toStartOf="@+id/guideline4"
-        app:layout_constraintTop_toBottomOf="@+id/login_phone_editText" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/text_input_layout_password"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="@+id/guideline6"
-        app:layout_constraintStart_toStartOf="@+id/guideline4"
-        app:layout_constraintTop_toBottomOf="@+id/textView2"
-        app:passwordToggleEnabled="true"
-        app:passwordToggleTint="@drawable/color_password_toggle">
-
-        <EditText
-            android:id="@+id/signup_password_editText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:maxLines="1"
-            android:paddingEnd="0dp" />
-    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/signUpButton"
@@ -89,10 +75,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/button_shape"
-        android:text="Sign Up"
+        android:text="Log In"
         app:layout_constraintEnd_toStartOf="@+id/guideline6"
         app:layout_constraintStart_toStartOf="@+id/guideline4"
-        app:layout_constraintTop_toBottomOf="@+id/text_input_layout_password" />
+        app:layout_constraintTop_toBottomOf="@+id/login_phone_editText" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline4"

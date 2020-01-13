@@ -113,7 +113,7 @@
         android:layout_marginStart="16dp"
         android:ellipsize="end"
         android:maxLines="3"
-        android:text="hey i am using Alapon. This is nice and cool app."
+        android:text="hey i am using Alapon. Lets make a conversion."
         android:textColor="@color/textColor"
         android:textSize="18dp"
         app:layout_constraintStart_toEndOf="@+id/imageView3"
@@ -143,12 +143,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="Phone"
+        android:text="Email or Phone number"
         app:layout_constraintStart_toEndOf="@+id/imageView5"
         app:layout_constraintTop_toTopOf="@+id/imageView5" />
 
     <TextView
-        android:id="@+id/phone_no"
+        android:id="@+id/email_or_phone"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
