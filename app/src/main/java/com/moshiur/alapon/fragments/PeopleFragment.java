@@ -128,6 +128,8 @@ public class PeopleFragment extends Fragment {
                 intent.putExtra("userID", mPeopleDataModel.get(position).getUserID());
                 intent.putExtra("userName", mPeopleDataModel.get(position).getName());
                 intent.putExtra("userProfileImageURL", mPeopleDataModel.get(position).getImageURL());
+                intent.putExtra("currentUserProfileImageURL", currentUser.getUserProfilePhotoURL());
+                intent.putExtra("senderName", currentUser.getUserName());
                 startActivity(intent);
             }
 

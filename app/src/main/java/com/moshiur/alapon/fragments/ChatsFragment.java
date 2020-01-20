@@ -17,8 +17,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.moshiur.alapon.R;
 import com.moshiur.alapon.activities.ConversationActivity;
 import com.moshiur.alapon.activities.ProfileActivity;
@@ -98,6 +101,9 @@ public class ChatsFragment extends Fragment {
                 intent.putExtra("userID", lastMessageDataModel.getUserID());
                 intent.putExtra("userName", lastMessageDataModel.getUserName());
                 intent.putExtra("userProfileImageURL", lastMessageDataModel.getProfileImageURL());
+                intent.putExtra("currentUserProfileImageURL", currentUser.getUserProfilePhotoURL());
+                intent.putExtra("senderName", currentUser.getUserName());
+
                 startActivity(intent);
             }
 
@@ -122,7 +128,7 @@ public class ChatsFragment extends Fragment {
         chatsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         //add item decoration
         chatsRecyclerView.addItemDecoration(new VerticalSpaceItemDecoration(50));
-        // dataPreparation();
+        //dataPreparation();
         //set adapter
         chatsRecyclerViewAdapter = new ChatsRecyclerViewAdapter(getContext(), mLastMessageDataModels);
         chatsRecyclerView.setAdapter(chatsRecyclerViewAdapter);
@@ -130,115 +136,26 @@ public class ChatsFragment extends Fragment {
     }
 
     private void dataPreparation() {
-        final String currentUserID = currentUser.getUserID();
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("chats");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("contacts").child(currentUser.getUserID());
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mLastMessageDataModels.clear();
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        LastMessageDataModel model = snapshot.getValue(LastMessageDataModel.class);
+                        assert model != null;
+                        mLastMessageDataModels.add(model);
+                    }
+                }
+                chatsRecyclerViewAdapter.notifyDataSetChanged();
+            }
 
-//        databaseReference.addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                mLastMessageDataModels.clear();
-//                if (dataSnapshot.exists()){
-//                    key = dataSnapshot.getKey();
-//                    if (key.contains(currentUserID)){
-//
-//                        //retrieve user who has chat with me
-//                        userID = key.replace(currentUserID, "");
-//                        DatabaseReference db = FirebaseDatabase.getInstance().getReference("users").child(userID);
-//                        db.addListenerForSingleValueEvent(new ValueEventListener() {
-//                            @Override
-//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                                if (dataSnapshot.exists()){
-//                                    UserDataModel model = dataSnapshot.getValue(UserDataModel.class);
-//                                    assert model != null;
-//                                    userName = model.getUserName();
-//                                    imageURL = model.getUserProfilePhotoURL();
-//                                    mLastMessageDataModels.add(new LastMessageDataModel(userID, imageURL, userName, lastMessage, lastMessageTime));
-//                                }
-//                                chatsRecyclerViewAdapter.notifyDataSetChanged();
-//
-////                                FirebaseDatabase.getInstance().getReference("chats").child(key).orderByKey().limitToLast(1)
-////                                        .addChildEventListener(new ChildEventListener() {
-////                                            @Override
-////                                            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-////                                                if (dataSnapshot.exists()){
-////                                                    MessageModel messageModel = dataSnapshot.getValue(MessageModel.class);
-////                                                    assert messageModel != null;
-////                                                    lastMessage = messageModel.getMessage();
-////                                                    lastMessageTime = messageModel.getTimestamp();
-////                                                    lastMessageTime = lastMessageTime.substring(0,lastMessageTime.indexOf("AT")).trim();
-////                                                    String date = currentDate();
-////                                                    if (date.equals(lastMessageTime)){
-////                                                        lastMessageTime = messageModel.getTimestamp();
-////                                                        lastMessageTime = lastMessageTime.substring(lastMessageTime.indexOf("AT")+3);
-////                                                    }
-////
-////                                                    mLastMessageDataModels.add(new LastMessageDataModel(userID, imageURL, userName, lastMessage, lastMessageTime));
-////
-////                                                    Log.d(TAG, "onChildAdded: "+ lastMessage+lastMessageTime);
-////
-////                                                }
-////
-////                                                chatsRecyclerViewAdapter.notifyDataSetChanged();
-////
-////
-////                                            }
-////
-////                                            @Override
-////                                            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-////
-////                                            }
-////
-////                                            @Override
-////                                            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-////
-////                                            }
-////
-////                                            @Override
-////                                            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-////
-////                                            }
-////
-////                                            @Override
-////                                            public void onCancelled(@NonNull DatabaseError databaseError) {
-////
-////                                            }
-////                                        });
-//
-//                            }
-//
-//                            @Override
-//                            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                            }
-//                        });
-//
-//
-//                    }
-//
-//                }
-//            }
-//
-//            @Override
-//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
+            }
+        });
     }
 
     private void initializeUI() {
@@ -282,7 +199,7 @@ public class ChatsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
+        mLastMessageDataModels.clear();
         dataPreparation();
     }
 }

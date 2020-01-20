@@ -30,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.moshiur.alapon.R;
 import com.moshiur.alapon.adapters.MessageRecyclerViewAdapter;
 import com.moshiur.alapon.interfaces.MyOnItemClickListener;
+import com.moshiur.alapon.models.LastMessageDataModel;
 import com.moshiur.alapon.models.MessageModel;
 import com.moshiur.alapon.utils.VerticalSpaceItemDecoration;
 
@@ -50,8 +51,8 @@ public class ConversationActivity extends AppCompatActivity {
     List<MessageModel> messageModels = new ArrayList<>();
     Map<String, MessageModel> mappedMessage = new HashMap<>();
 
-    private String recieverID, senderID, imageURL, message;
-    private String reciverName;
+    private String receiverID, senderID, senderImageURL, receiverImageURL, message;
+    private String senderName, receiverName;
 
     private ImageView profileImageToolbar;
     private TextView toolbarName;
@@ -105,10 +106,10 @@ public class ConversationActivity extends AppCompatActivity {
     }
 
     private void setConversationID() {
-        if (getStringValue(senderID) > getStringValue(recieverID)) {
-            conversationID = senderID + recieverID;
+        if (getStringValue(senderID) > getStringValue(receiverID)) {
+            conversationID = senderID + receiverID;
         } else {
-            conversationID = recieverID + senderID;
+            conversationID = receiverID + senderID;
         }
     }
 
@@ -130,7 +131,7 @@ public class ConversationActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     MessageModel messageModel = snapshot.getValue(MessageModel.class);
                     assert messageModel != null;
-                    if (messageModel.getReceiver().equals(senderID) && messageModel.getSender().equals(recieverID)) {
+                    if (messageModel.getReceiver().equals(senderID) && messageModel.getSender().equals(receiverID)) {
 
                         HashMap<String, Object> hashMap = new HashMap<>();
                         hashMap.put("seenStatus", "seen");
@@ -174,16 +175,16 @@ public class ConversationActivity extends AppCompatActivity {
 
         //readMessages();
 
-        Query query = FirebaseDatabase.getInstance().getReference("chats").child(conversationID).limitToLast(30);
+        Query query = FirebaseDatabase.getInstance().getReference("chats").child(conversationID);
 
         FirebaseRecyclerOptions<MessageModel> options = new FirebaseRecyclerOptions.Builder<MessageModel>()
                 .setQuery(query, MessageModel.class)
-                .setLifecycleOwner(this)
+                //.setLifecycleOwner(this)
                 .build();
 
 
         //set adapter
-        messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(options, this, imageURL);
+        messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(options, this, receiverImageURL);
 
         // Scroll to bottom on new messages
         messageRecyclerViewAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
@@ -247,13 +248,26 @@ public class ConversationActivity extends AppCompatActivity {
         if (!message.isEmpty()) {
             //clear editText
             typeMessageEditText.getText().clear();
+            //check is it first message or not
             writeMessage(message);
+            updateContactList(message);
         }
+    }
+
+    private void updateContactList(String message) {
+        DatabaseReference ref = rootReference.child("contacts").child(senderID).child(receiverID);
+        //for sender list
+        LastMessageDataModel model = new LastMessageDataModel(receiverID, receiverImageURL, receiverName, message, getTimestamp());
+        ref.setValue(model);
+
+        ref = rootReference.child("contacts").child(receiverID).child(senderID);
+        model = new LastMessageDataModel(senderID, senderImageURL, senderName, message, getTimestamp());
+        ref.setValue(model);
     }
 
     private void writeMessage(String message) {
         final DatabaseReference ref = rootReference.child("chats").child(conversationID).push();
-        MessageModel newMessage = new MessageModel(ref.toString(), senderID, recieverID, getTimestamp(), message, "not seen", notSentMessageIcon);
+        MessageModel newMessage = new MessageModel(ref.toString(), senderID, receiverID, getTimestamp(), message, "not seen", notSentMessageIcon);
         //update map
         mappedMessage.put(ref.toString(), newMessage);
         ref.setValue(newMessage)
@@ -285,10 +299,11 @@ public class ConversationActivity extends AppCompatActivity {
     private void getIntentData() {
         Intent intent = getIntent();
 
-        recieverID = intent.getStringExtra("userID");
-        reciverName = intent.getStringExtra("userName");
-        imageURL = intent.getStringExtra("userProfileImageURL");
-
+        receiverID = intent.getStringExtra("userID");
+        receiverName = intent.getStringExtra("userName");
+        receiverImageURL = intent.getStringExtra("userProfileImageURL");
+        senderImageURL = intent.getStringExtra("currentUserProfileImageURL");
+        senderName = intent.getStringExtra("senderName");
     }
 
     private void handleToolbarMenuItem() {
@@ -301,13 +316,13 @@ public class ConversationActivity extends AppCompatActivity {
         });
 
         //load image
-        if (imageURL.equals("default")) {
+        if (receiverImageURL.equals("default")) {
             profileImageToolbar.setImageResource(R.drawable.profile_icon);
         } else {
-            Glide.with(ConversationActivity.this).load(imageURL).into(profileImageToolbar);
+            Glide.with(ConversationActivity.this).load(receiverImageURL).into(profileImageToolbar);
         }
         //load name
-        toolbarName.setText(reciverName);
+        toolbarName.setText(receiverName);
 
     }
 

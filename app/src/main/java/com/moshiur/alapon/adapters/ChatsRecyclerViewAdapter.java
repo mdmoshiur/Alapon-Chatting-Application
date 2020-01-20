@@ -15,6 +15,8 @@ import com.moshiur.alapon.R;
 import com.moshiur.alapon.interfaces.MyOnItemClickListener;
 import com.moshiur.alapon.models.LastMessageDataModel;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class ChatsRecyclerViewAdapter extends RecyclerView.Adapter<ChatsRecyclerViewAdapter.ChatsRecyclerViewHolder> {
@@ -51,7 +53,7 @@ public class ChatsRecyclerViewAdapter extends RecyclerView.Adapter<ChatsRecycler
 
         holder.nameView.setText(model.getUserName());
         holder.lastMessageView.setText(model.getLastMessage());
-        holder.lastMessageTimeView.setText(model.getLastMessageTime());
+        holder.lastMessageTimeView.setText(getMessageTime(model.getLastMessageTime()));
 
     }
 
@@ -97,5 +99,24 @@ public class ChatsRecyclerViewAdapter extends RecyclerView.Adapter<ChatsRecycler
 
         }
     }
+
+
+    private String getMessageTime(String messageTime) {
+        String messageDate = messageTime.substring(0, messageTime.indexOf("AT")).trim();
+        String currentDate = currentDate();
+        if (currentDate.equals(messageDate)) {
+            messageDate = messageTime.substring(messageTime.indexOf("AT") + 3);
+            return messageDate;
+        } else {
+            return messageDate;
+        }
+    }
+
+    private String currentDate() {
+        //SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd");
+        return sdf.format(new Date());
+    }
+
 
 }
