@@ -93,6 +93,7 @@ public class PhoneNumberLogInActivity extends AppCompatActivity {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                confirmDialog.cancel();
                 Intent intent = new Intent(PhoneNumberLogInActivity.this, VerifyPhoneActivity.class);
                 intent.putExtra("user_name", user_name);
                 intent.putExtra("phone_number", phone_no);

@@ -25,7 +25,7 @@
         android:maxLines="1"
         android:text="Name"
         android:textColor="@color/activeNavColor"
-        android:textSize="18dp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/last_message_time_id_last_message_layout"
         app:layout_constraintStart_toEndOf="@+id/profile_image_id_last_message_layout"
         app:layout_constraintTop_toTopOf="parent" />
@@ -39,7 +39,7 @@
         android:maxLines="1"
         android:text="Say hi to your friend"
         android:textColor="@color/textColor"
-        android:textSize="16dp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/profile_image_id_last_message_layout"
         app:layout_constraintTop_toBottomOf="@+id/name_id_last_message_layout"
@@ -51,8 +51,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:text="27/12/19"
-        android:textSize="16dp"
-        android:textStyle="italic"
+        android:textSize="16sp"
+        android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="@+id/name_id_last_message_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/name_id_last_message_layout" />

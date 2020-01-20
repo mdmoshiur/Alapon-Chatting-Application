@@ -4,8 +4,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class UserDataModel implements Parcelable {
+
     private String userID;
     private String userName;
+    private String userEmailOrPhoneNumber;
     public static final Creator<UserDataModel> CREATOR = new Creator<UserDataModel>() {
         @Override
         public UserDataModel createFromParcel(Parcel in) {
@@ -17,13 +19,14 @@ public class UserDataModel implements Parcelable {
             return new UserDataModel[size];
         }
     };
-    private String userEmailOrPhoneNumber;
+    private String userProfilePhotoURL;
+    private String userActiveStatus;
 
     public UserDataModel() {
         //empty constructor
     }
 
-    private String userProfilePhotoURL;
+
 
     public UserDataModel(String userID, String userName, String userEmailOrPhoneNumber, String userProfileImageURL) {
         this.userID = userID;
@@ -32,12 +35,7 @@ public class UserDataModel implements Parcelable {
         this.userProfilePhotoURL = userProfileImageURL;
     }
 
-    protected UserDataModel(Parcel in) {
-        userID = in.readString();
-        userName = in.readString();
-        userEmailOrPhoneNumber = in.readString();
-        userProfilePhotoURL = in.readString();
-    }
+    private String userLastActiveTimestamp;
 
     public String getUserID() {
         return userID;
@@ -71,6 +69,23 @@ public class UserDataModel implements Parcelable {
         this.userProfilePhotoURL = userProfilePhotoURL;
     }
 
+    protected UserDataModel(Parcel in) {
+        userID = in.readString();
+        userName = in.readString();
+        userEmailOrPhoneNumber = in.readString();
+        userProfilePhotoURL = in.readString();
+        userActiveStatus = in.readString();
+        userLastActiveTimestamp = in.readString();
+    }
+
+    public String getUserActiveStatus() {
+        return userActiveStatus;
+    }
+
+    public String getUserLastActiveTimestamp() {
+        return userLastActiveTimestamp;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -82,5 +97,7 @@ public class UserDataModel implements Parcelable {
         dest.writeString(userName);
         dest.writeString(userEmailOrPhoneNumber);
         dest.writeString(userProfilePhotoURL);
+        dest.writeString(userActiveStatus);
+        dest.writeString(userLastActiveTimestamp);
     }
 }

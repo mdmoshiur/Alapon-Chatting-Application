@@ -7,9 +7,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -17,31 +17,42 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.moshiur.alapon.R;
 import com.moshiur.alapon.adapters.MessageRecyclerViewAdapter;
+import com.moshiur.alapon.interfaces.MyOnItemClickListener;
 import com.moshiur.alapon.models.MessageModel;
 import com.moshiur.alapon.utils.VerticalSpaceItemDecoration;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class ConversationActivity extends AppCompatActivity {
 
+    private static final String TAG = "ConversationActivity";
+
     private Toolbar toolbar;
 
-    ArrayList<MessageModel> messageModels = new ArrayList<>();
+    List<MessageModel> messageModels = new ArrayList<>();
+    Map<String, MessageModel> mappedMessage = new HashMap<>();
+
     private String recieverID, senderID, imageURL, message;
     private String reciverName;
-    private String isSeen = "not seen";
+
     private ImageView profileImageToolbar;
     private TextView toolbarName;
     //type message layout views & buttons
@@ -54,7 +65,11 @@ public class ConversationActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private MessageRecyclerViewAdapter messageRecyclerViewAdapter;
 
+    private int notSentMessageIcon = R.drawable.ic_empty_circle_24dp;
+
     private DatabaseReference rootReference;
+    private String conversationID;
+    private ValueEventListener seenListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +80,18 @@ public class ConversationActivity extends AppCompatActivity {
         initializeUI();
         senderID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         rootReference = FirebaseDatabase.getInstance().getReference();
+
+        setConversationID();
+
+        isMessageSeen();
+
         handleToolbarMenuItem();
 
         //display messages
         setConversationRecyclerView();
+
+        //set message item onclick listener
+        setOnItemClickListener();
 
         //send message :)
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +102,62 @@ public class ConversationActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void setConversationID() {
+        if (getStringValue(senderID) > getStringValue(recieverID)) {
+            conversationID = senderID + recieverID;
+        } else {
+            conversationID = recieverID + senderID;
+        }
+    }
+
+    private int getStringValue(String string) {
+        int length = string.length();
+        int value = 0;
+        for (int i = 0; i < length; i++) {
+            value += (int) string.charAt(i);
+        }
+
+        return value;
+    }
+
+    private void isMessageSeen() {
+        DatabaseReference databaseReference = rootReference.child("chats").child(conversationID);
+        seenListener = databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    MessageModel messageModel = snapshot.getValue(MessageModel.class);
+                    assert messageModel != null;
+                    if (messageModel.getReceiver().equals(senderID) && messageModel.getSender().equals(recieverID)) {
+
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("seenStatus", "seen");
+                        snapshot.getRef().updateChildren(hashMap);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void setOnItemClickListener() {
+        messageRecyclerViewAdapter.setOnItemClickListener(new MyOnItemClickListener() {
+            @Override
+            public void OnItemClickListener(int position) {
+                //retrieve message data
+            }
+
+            @Override
+            public void OnItemLongClickListener(int position) {
+
+            }
+        });
     }
 
     private void setConversationRecyclerView() {
@@ -93,31 +172,65 @@ public class ConversationActivity extends AppCompatActivity {
         //add item decoration
         conversationMessageRecyclerView.addItemDecoration(new VerticalSpaceItemDecoration(20));
 
-        readMessages();
+        //readMessages();
+
+        Query query = FirebaseDatabase.getInstance().getReference("chats").child(conversationID).limitToLast(30);
+
+        FirebaseRecyclerOptions<MessageModel> options = new FirebaseRecyclerOptions.Builder<MessageModel>()
+                .setQuery(query, MessageModel.class)
+                .setLifecycleOwner(this)
+                .build();
+
 
         //set adapter
-        messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(this, messageModels, imageURL);
+        messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(options, this, imageURL);
+
+        // Scroll to bottom on new messages
+        messageRecyclerViewAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                conversationMessageRecyclerView.smoothScrollToPosition(messageRecyclerViewAdapter.getItemCount());
+            }
+        });
+
         conversationMessageRecyclerView.setAdapter(messageRecyclerViewAdapter);
 
     }
 
     private void readMessages() {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("chats");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("chats").child(conversationID);
+        databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                messageModels.clear();
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if (dataSnapshot.exists()) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        MessageModel messageModel = snapshot.getValue(MessageModel.class);
-                        assert messageModel != null;
-                        if (messageModel.getSender().equals(senderID) && messageModel.getReceiver().equals(recieverID)
-                                || messageModel.getReceiver().equals(senderID) && messageModel.getSender().equals(recieverID)) {
-                            messageModels.add(messageModel);
-                        }
-                    }
-                    messageRecyclerViewAdapter.notifyDataSetChanged();
+                    MessageModel messageModel = dataSnapshot.getValue(MessageModel.class);
+                    assert messageModel != null;
+                    messageModels.add(messageModel);
                 }
+                conversationMessageRecyclerView.smoothScrollToPosition(messageModels.size());
+                messageRecyclerViewAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if (dataSnapshot.exists()) {
+                    MessageModel messageModel = dataSnapshot.getValue(MessageModel.class);
+                    assert messageModel != null;
+                    messageModels.remove(messageModels.size() - 1);
+                    messageModels.add(messageModel);
+                }
+                conversationMessageRecyclerView.smoothScrollToPosition(messageModels.size());
+                messageRecyclerViewAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
             }
 
             @Override
@@ -125,6 +238,7 @@ public class ConversationActivity extends AppCompatActivity {
 
             }
         });
+
     }
 
     private void sendMessage() {
@@ -138,12 +252,18 @@ public class ConversationActivity extends AppCompatActivity {
     }
 
     private void writeMessage(String message) {
-        MessageModel newMessage = new MessageModel(senderID, recieverID, getTimestamp(), message, isSeen);
-        rootReference.child("chats").push().setValue(newMessage)
+        final DatabaseReference ref = rootReference.child("chats").child(conversationID).push();
+        MessageModel newMessage = new MessageModel(ref.toString(), senderID, recieverID, getTimestamp(), message, "not seen", notSentMessageIcon);
+        //update map
+        mappedMessage.put(ref.toString(), newMessage);
+        ref.setValue(newMessage)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(ConversationActivity.this, "Message sent", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(ConversationActivity.this, "Message sent", Toast.LENGTH_SHORT).show();
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("messageSentImageResourceID", R.drawable.ic_check_circle_black_24dp);
+                        ref.updateChildren(hashMap);
                     }
                 });
     }
@@ -182,11 +302,10 @@ public class ConversationActivity extends AppCompatActivity {
 
         //load image
         if (imageURL.equals("default")) {
-            profileImageToolbar.setImageResource(R.mipmap.ic_launcher);
+            profileImageToolbar.setImageResource(R.drawable.profile_icon);
         } else {
-            Glide.with(this).load(imageURL).into(profileImageToolbar);
+            Glide.with(ConversationActivity.this).load(imageURL).into(profileImageToolbar);
         }
-
         //load name
         toolbarName.setText(reciverName);
 
@@ -208,7 +327,27 @@ public class ConversationActivity extends AppCompatActivity {
     }
 
     private String getTimestamp() {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+        //SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd 'AT' h:mm a");
         return sdf.format(new Date());
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        messageRecyclerViewAdapter.startListening();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //remove seen listener
+        rootReference.child("chats").child(conversationID).removeEventListener(seenListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        messageRecyclerViewAdapter.stopListening();
     }
 }

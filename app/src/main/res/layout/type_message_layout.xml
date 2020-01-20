@@ -38,7 +38,7 @@
         android:ems="10"
         android:hint="Type a message..."
         android:inputType="text"
-        android:maxHeight="200dp"
+        android:maxLines="3"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
         android:paddingEnd="32dp"

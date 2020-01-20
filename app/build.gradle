@@ -57,4 +57,7 @@ dependencies {
     //for google sign in
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
 
+    // FirebaseUI for Firebase Realtime Database
+    implementation 'com.firebaseui:firebase-ui-database:6.2.0'
+
 }

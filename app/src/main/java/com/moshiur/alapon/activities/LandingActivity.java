@@ -251,6 +251,7 @@ public class LandingActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
+        super.onStart();
         if (mAuth.getCurrentUser() == null) {
             group.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
@@ -258,7 +259,7 @@ public class LandingActivity extends AppCompatActivity {
             group.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(mAuth.getCurrentUser().getUid());
-            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            databaseReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
@@ -268,6 +269,7 @@ public class LandingActivity extends AppCompatActivity {
                         Intent intent = new Intent(LandingActivity.this, MainActivity.class);
                         intent.putExtra("userDataModel", currentUser);
                         startActivity(intent);
+                        finish();
 
                     }
                 }
@@ -279,6 +281,5 @@ public class LandingActivity extends AppCompatActivity {
             });
         }
 
-        super.onStart();
     }
 }

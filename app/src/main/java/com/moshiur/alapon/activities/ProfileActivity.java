@@ -125,7 +125,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //logout current user
-                mAuth.signOut();
+                FirebaseAuth.getInstance().signOut();
                 //check facebook logged in or not
                 if (AccessToken.getCurrentAccessToken() != null) {
                     LoginManager.getInstance().logOut();
@@ -137,7 +137,8 @@ public class ProfileActivity extends AppCompatActivity {
                     mGoogleSignInClient.signOut();
                 }
 
-                startActivity(new Intent(ProfileActivity.this, LandingActivity.class));
+                startActivity(new Intent(ProfileActivity.this, LandingActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                finish();
             }
         });
     }

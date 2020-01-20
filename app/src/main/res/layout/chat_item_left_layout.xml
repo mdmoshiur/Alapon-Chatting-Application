@@ -9,12 +9,12 @@
         android:id="@+id/message_time_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="26dp"
         android:text="8.11 pm"
-        android:textSize="14sp"
-        android:textStyle="italic"
+        android:textSize="12sp"
+        android:textStyle="normal"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="@+id/message_id"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -22,8 +22,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
-
-        android:src="@drawable/image"
+        android:src="@drawable/profile_icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/message_time_id" />
 
@@ -31,6 +30,7 @@
         android:id="@+id/message_id"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
         android:layout_marginLeft="4dp"
         android:background="@drawable/chat_item_left_background"
         android:padding="12dp"

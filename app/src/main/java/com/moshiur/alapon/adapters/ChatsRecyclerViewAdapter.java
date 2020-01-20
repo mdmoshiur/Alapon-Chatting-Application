@@ -1,5 +1,6 @@
 package com.moshiur.alapon.adapters;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,44 +10,54 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.moshiur.alapon.R;
 import com.moshiur.alapon.interfaces.MyOnItemClickListener;
 import com.moshiur.alapon.models.LastMessageDataModel;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class ChatsRecyclerViewAdapter extends RecyclerView.Adapter<ChatsRecyclerViewAdapter.ChatsRecyclerViewHolder> {
 
     private MyOnItemClickListener myOnItemClickListener;
 
-    ArrayList<LastMessageDataModel> listData;
+    private List<LastMessageDataModel> mList;
+    private Context mContext;
 
-    public ChatsRecyclerViewAdapter(ArrayList<LastMessageDataModel> lastMessageDataModels) {
-        this.listData = lastMessageDataModels;
+
+    public ChatsRecyclerViewAdapter(Context context, List<LastMessageDataModel> mList) {
+        this.mContext = context;
+        this.mList = mList;
     }
+
 
     @NonNull
     @Override
     public ChatsRecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.last_message_layout, parent, false);
-        ChatsRecyclerViewHolder crvh = new ChatsRecyclerViewHolder(v);
-        return crvh;
+        return new ChatsRecyclerViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ChatsRecyclerViewHolder holder, int position) {
-        LastMessageDataModel lastMessageDataModel = listData.get(position);
 
-        holder.imageView.setImageResource(lastMessageDataModel.getImage());
-        holder.nameView.setText(lastMessageDataModel.getName());
-        holder.lastMessageView.setText(lastMessageDataModel.getLastMessage());
-        holder.lastMessageTimeView.setText(lastMessageDataModel.getLastMessageTime());
+        LastMessageDataModel model = mList.get(position);
+
+        if (model.getProfileImageURL().equals("default")) {
+            holder.imageView.setImageResource(R.drawable.profile_icon);
+        } else {
+            Glide.with(mContext).load(model.getProfileImageURL()).into(holder.imageView);
+        }
+
+        holder.nameView.setText(model.getUserName());
+        holder.lastMessageView.setText(model.getLastMessage());
+        holder.lastMessageTimeView.setText(model.getLastMessageTime());
 
     }
 
     @Override
     public int getItemCount() {
-        return listData.size();
+        return mList.size();
     }
 
     //listener interface

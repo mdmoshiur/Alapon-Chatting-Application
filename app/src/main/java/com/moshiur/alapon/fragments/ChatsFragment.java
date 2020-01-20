@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.moshiur.alapon.R;
 import com.moshiur.alapon.activities.ConversationActivity;
 import com.moshiur.alapon.activities.ProfileActivity;
@@ -27,7 +28,10 @@ import com.moshiur.alapon.models.LastMessageDataModel;
 import com.moshiur.alapon.models.UserDataModel;
 import com.moshiur.alapon.utils.VerticalSpaceItemDecoration;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 
 public class ChatsFragment extends Fragment {
@@ -41,7 +45,7 @@ public class ChatsFragment extends Fragment {
     private ImageView profileImage;
 
 
-    ArrayList<LastMessageDataModel> mLastMessageDataModels = new ArrayList<>();
+    List<LastMessageDataModel> mLastMessageDataModels = new ArrayList<>();
     private RecyclerView chatsRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private ChatsRecyclerViewAdapter chatsRecyclerViewAdapter;
@@ -50,6 +54,8 @@ public class ChatsFragment extends Fragment {
 
     private static final String USER_DATA_MODEL = "userDataModel";
     private UserDataModel currentUser;
+
+    private String userID, key, imageURL, lastMessage, userName, lastMessageTime;
 
     public static ChatsFragment newInstance(UserDataModel userDataModel) {
 
@@ -87,10 +93,11 @@ public class ChatsFragment extends Fragment {
         chatsRecyclerViewAdapter.setOnItemClickListener(new MyOnItemClickListener() {
             @Override
             public void OnItemClickListener(int position) {
+                LastMessageDataModel lastMessageDataModel = mLastMessageDataModels.get(position);
                 Intent intent = new Intent(getContext(), ConversationActivity.class);
-                intent.putExtra("userID", "id");
-                intent.putExtra("userName", "fake");
-                intent.putExtra("userProfileImageURL", "default");
+                intent.putExtra("userID", lastMessageDataModel.getUserID());
+                intent.putExtra("userName", lastMessageDataModel.getUserName());
+                intent.putExtra("userProfileImageURL", lastMessageDataModel.getProfileImageURL());
                 startActivity(intent);
             }
 
@@ -112,35 +119,125 @@ public class ChatsFragment extends Fragment {
         chatsRecyclerView.setHasFixedSize(true); //it increases performance
 
         //use a linear layout manager
-        layoutManager = new LinearLayoutManager(getContext());
-        chatsRecyclerView.setLayoutManager(layoutManager);
+        chatsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         //add item decoration
         chatsRecyclerView.addItemDecoration(new VerticalSpaceItemDecoration(50));
-
-        dataPreparation();
-
+        // dataPreparation();
         //set adapter
-        chatsRecyclerViewAdapter = new ChatsRecyclerViewAdapter(mLastMessageDataModels);
+        chatsRecyclerViewAdapter = new ChatsRecyclerViewAdapter(getContext(), mLastMessageDataModels);
         chatsRecyclerView.setAdapter(chatsRecyclerViewAdapter);
 
     }
 
     private void dataPreparation() {
-        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.image, "Md Moshiur Rahman", "hello hi bye bye", "25 Dec"));
-        mLastMessageDataModels.add(new LastMessageDataModel(R.mipmap.ic_launcher, "Md Moshiur Rahman", "hello hi bye bye", "25 Dec"));
-        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.applogo, "Md Moshiur Rahman", "hello hi bye bye", "25 Dec"));
-        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.image, "Md Moshiur Rahman", "hello hi bye bye", "25 Dec"));
-        mLastMessageDataModels.add(new LastMessageDataModel(R.mipmap.ic_launcher, "Md Moshiur Rahman", "hello hi bye bye", "25 Dec"));
-        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.applogo, "Md Moshiur Rahman", "hello hi bye bye", "25 Dec"));
-        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.image, "Md Moshiur Rahman", "hello hi bye bye", "25 Dec"));
-        mLastMessageDataModels.add(new LastMessageDataModel(R.mipmap.ic_launcher, "Md Moshiur Rahman", "hello hi bye bye", "25 Dec"));
-        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.applogo, "Md Moshiur Rahman", "hello hi bye bye", "25 Dec"));
-        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.image, "Md Moshiur Rahman", "hello hi bye bye", "25 Dec"));
-        mLastMessageDataModels.add(new LastMessageDataModel(R.mipmap.ic_launcher, "Md Moshiur Rahman", "hello hi bye bye", "25 Dec"));
-        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.applogo, "Md Moshiur Rahman", "hello hi bye bye", "25 Dec"));
-        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.image, "Md Moshiur Rahman", "hello hi bye bye", "25 Dec"));
-        mLastMessageDataModels.add(new LastMessageDataModel(R.mipmap.ic_launcher, "Md Moshiur Rahman", "hello hi bye bye", "25 Dec"));
-        mLastMessageDataModels.add(new LastMessageDataModel(R.drawable.applogo, "Md Moshiur Rahman", "hello hi bye bye", "25 Dec"));
+        final String currentUserID = currentUser.getUserID();
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("chats");
+
+//        databaseReference.addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                mLastMessageDataModels.clear();
+//                if (dataSnapshot.exists()){
+//                    key = dataSnapshot.getKey();
+//                    if (key.contains(currentUserID)){
+//
+//                        //retrieve user who has chat with me
+//                        userID = key.replace(currentUserID, "");
+//                        DatabaseReference db = FirebaseDatabase.getInstance().getReference("users").child(userID);
+//                        db.addListenerForSingleValueEvent(new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                if (dataSnapshot.exists()){
+//                                    UserDataModel model = dataSnapshot.getValue(UserDataModel.class);
+//                                    assert model != null;
+//                                    userName = model.getUserName();
+//                                    imageURL = model.getUserProfilePhotoURL();
+//                                    mLastMessageDataModels.add(new LastMessageDataModel(userID, imageURL, userName, lastMessage, lastMessageTime));
+//                                }
+//                                chatsRecyclerViewAdapter.notifyDataSetChanged();
+//
+////                                FirebaseDatabase.getInstance().getReference("chats").child(key).orderByKey().limitToLast(1)
+////                                        .addChildEventListener(new ChildEventListener() {
+////                                            @Override
+////                                            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+////                                                if (dataSnapshot.exists()){
+////                                                    MessageModel messageModel = dataSnapshot.getValue(MessageModel.class);
+////                                                    assert messageModel != null;
+////                                                    lastMessage = messageModel.getMessage();
+////                                                    lastMessageTime = messageModel.getTimestamp();
+////                                                    lastMessageTime = lastMessageTime.substring(0,lastMessageTime.indexOf("AT")).trim();
+////                                                    String date = currentDate();
+////                                                    if (date.equals(lastMessageTime)){
+////                                                        lastMessageTime = messageModel.getTimestamp();
+////                                                        lastMessageTime = lastMessageTime.substring(lastMessageTime.indexOf("AT")+3);
+////                                                    }
+////
+////                                                    mLastMessageDataModels.add(new LastMessageDataModel(userID, imageURL, userName, lastMessage, lastMessageTime));
+////
+////                                                    Log.d(TAG, "onChildAdded: "+ lastMessage+lastMessageTime);
+////
+////                                                }
+////
+////                                                chatsRecyclerViewAdapter.notifyDataSetChanged();
+////
+////
+////                                            }
+////
+////                                            @Override
+////                                            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+////
+////                                            }
+////
+////                                            @Override
+////                                            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+////
+////                                            }
+////
+////                                            @Override
+////                                            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+////
+////                                            }
+////
+////                                            @Override
+////                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+////
+////                                            }
+////                                        });
+//
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                            }
+//                        });
+//
+//
+//                    }
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//            }
+//
+//            @Override
+//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
 
     }
 
@@ -150,7 +247,7 @@ public class ChatsFragment extends Fragment {
 
     private void setToolbarProfileImage() {
         if (currentUser.getUserProfilePhotoURL().equals("default")) {
-            profileImage.setImageResource(R.drawable.image);
+            profileImage.setImageResource(R.drawable.profile_icon);
         } else {
             Glide.with(ChatsFragment.this).load(currentUser.getUserProfilePhotoURL()).into(profileImage);
         }
@@ -176,4 +273,16 @@ public class ChatsFragment extends Fragment {
         toolbar.setTitle("");
     }
 
+    private String currentDate() {
+        //SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd");
+        return sdf.format(new Date());
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        dataPreparation();
+    }
 }

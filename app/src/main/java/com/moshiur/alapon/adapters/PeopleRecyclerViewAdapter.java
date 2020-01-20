@@ -15,16 +15,16 @@ import com.moshiur.alapon.R;
 import com.moshiur.alapon.interfaces.MyOnItemClickListener;
 import com.moshiur.alapon.models.PeopleDataModel;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class PeopleRecyclerViewAdapter extends RecyclerView.Adapter<PeopleRecyclerViewAdapter.PeopleRecyclerViewHolder> {
 
     private Context mContext;
-    private ArrayList<PeopleDataModel> listData;
+    private List<PeopleDataModel> listData;
     //interface variable
     private MyOnItemClickListener myOnItemClickListener;
 
-    public PeopleRecyclerViewAdapter(Context context, ArrayList<PeopleDataModel> peopleDataModels) {
+    public PeopleRecyclerViewAdapter(Context context, List<PeopleDataModel> peopleDataModels) {
         this.listData = peopleDataModels;
         this.mContext = context;
     }

@@ -21,11 +21,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.moshiur.alapon.R;
 import com.moshiur.alapon.activities.ConversationActivity;
 import com.moshiur.alapon.activities.ProfileActivity;
@@ -36,6 +36,7 @@ import com.moshiur.alapon.models.UserDataModel;
 import com.moshiur.alapon.utils.VerticalSpaceItemDecoration;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PeopleFragment extends Fragment {
 
@@ -47,7 +48,7 @@ public class PeopleFragment extends Fragment {
 
     private Button allButton, activeButton;
 
-    ArrayList<PeopleDataModel> mPeopleDataModel = new ArrayList<>();
+    List<PeopleDataModel> mPeopleDataModel = new ArrayList<>();
 
     private RecyclerView peopleRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -84,7 +85,7 @@ public class PeopleFragment extends Fragment {
 
         handleToolbarMenu();
         handleButtons();
-        recyclerViewDataPreparation();
+        //recyclerViewDataPreparation();
         setRecyclerView();
         setRecyclerViewOnItemClickListener();
 
@@ -156,20 +157,35 @@ public class PeopleFragment extends Fragment {
     private void recyclerViewDataPreparation() {
         //data prep
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                        UserDataModel user = snapshot.getValue(UserDataModel.class);
-                        assert user != null;
-                        assert firebaseUser != null;
-                        //Log.d(TAG, "onDataChange:  userName"+user.getUserName());
+                if (dataSnapshot.exists()) {
+                    UserDataModel user = dataSnapshot.getValue(UserDataModel.class);
+                    assert user != null;
+                    //Log.d(TAG, "onDataChange:  userName"+user.getUserName());
+                    if (!currentUser.getUserID().equals(user.getUserID())) {
                         mPeopleDataModel.add(new PeopleDataModel(user.getUserID(), user.getUserName(), user.getUserProfilePhotoURL()));
                     }
-                    peopleRecyclerViewAdapter.notifyDataSetChanged();
                 }
+
+                peopleRecyclerViewAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
             }
 
             @Override
@@ -183,7 +199,7 @@ public class PeopleFragment extends Fragment {
         profileImage = toolbar.findViewById(R.id.toolbar_image);
 
         if (currentUser.getUserProfilePhotoURL().equals("default")) {
-            profileImage.setImageResource(R.drawable.image);
+            profileImage.setImageResource(R.drawable.profile_icon);
         } else {
             Glide.with(PeopleFragment.this).load(currentUser.getUserProfilePhotoURL()).into(profileImage);
         }
@@ -210,5 +226,12 @@ public class PeopleFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.people_fragment_options_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mPeopleDataModel.clear();
+        recyclerViewDataPreparation();
     }
 }

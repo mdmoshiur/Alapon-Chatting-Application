@@ -8,12 +8,12 @@
         android:id="@+id/message_time_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="26dp"
         android:text="8.11 pm"
-        android:textSize="14sp"
-        android:textStyle="italic"
+        android:textSize="12sp"
+        android:textStyle="normal"
         android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@+id/message_id"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -36,13 +36,13 @@
         android:id="@+id/message_seen_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/message_seen_background"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:text="seen"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:textStyle="italic"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/message_id"
@@ -51,12 +51,12 @@
 
     <ImageView
         android:id="@+id/message_sent_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
         android:layout_marginRight="2dp"
         android:layout_marginBottom="8dp"
         android:src="@drawable/ic_check_circle_black_24dp"
-        android:visibility="visible"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/message_id"
         app:layout_constraintRight_toRightOf="parent" />
 
