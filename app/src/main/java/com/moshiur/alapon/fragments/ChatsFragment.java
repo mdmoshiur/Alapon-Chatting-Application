@@ -198,8 +198,11 @@ public class ChatsFragment extends Fragment {
 
     @Override
     public void onStart() {
+        //updateUserActiveStatus("online");
         super.onStart();
         mLastMessageDataModels.clear();
         dataPreparation();
     }
+
+
 }

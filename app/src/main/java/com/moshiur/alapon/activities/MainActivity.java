@@ -9,16 +9,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 import com.moshiur.alapon.R;
 import com.moshiur.alapon.fragments.ChatsFragment;
 import com.moshiur.alapon.fragments.PeopleFragment;
 import com.moshiur.alapon.models.UserDataModel;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -74,36 +68,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void updateUserActiveStatus(String activeStatus) {
-
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd 'AT' h:mm a");
-        String timestamp = sdf.format(new Date());
-
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("userActiveStatus", activeStatus);
-        hashMap.put("userLastActiveTimestamp", timestamp);
-
-        FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).updateChildren(hashMap);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        updateUserActiveStatus("online");
-    }
-
-    //
+//    private void updateUserActiveStatus(String activeStatus) {
 //
-    @Override
-    public void onStop() {
-        super.onStop();
-        //updateUserActiveStatus("offline");
-    }
+//        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd 'AT' h:mm a");
+//        String timestamp = sdf.format(new Date());
+//
+//        HashMap<String, Object> hashMap = new HashMap<>();
+//        hashMap.put("userActiveStatus", activeStatus);
+//        hashMap.put("userLastActiveTimestamp", timestamp);
+//
+//        FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUserID()).updateChildren(hashMap);
+//    }
 //
 //    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        updateUserActiveStatus("offline");
+//    public void onStart() {
+//        super.onStart();
+//        updateUserActiveStatus("online");
 //    }
+//
 
 }

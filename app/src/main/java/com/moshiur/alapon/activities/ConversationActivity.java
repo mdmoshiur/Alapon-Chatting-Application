@@ -347,6 +347,19 @@ public class ConversationActivity extends AppCompatActivity {
         return sdf.format(new Date());
     }
 
+    private void updateUserActiveStatus(String activeStatus) {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd 'AT' h:mm a");
+        String timestamp = sdf.format(new Date());
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("userActiveStatus", activeStatus);
+        hashMap.put("userLastActiveTimestamp", timestamp);
+
+        FirebaseDatabase.getInstance().getReference("users").child(senderID).updateChildren(hashMap);
+    }
+
+
     @Override
     protected void onStart() {
         super.onStart();
