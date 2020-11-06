@@ -7,9 +7,9 @@ Some screenshots are :
 
 <div>
 
-<img src="Screenshot_20201107-042929_Alapon[1].jpg" width="450" height="auto">
-<img src="conversation[1].jpg" width="450" height="auto">
-<img src="profile[1].jpg" width="450" height="auto">
-<img src="active[1].jpg" width="450" height="auto">
+<img src="Screenshot_20201107-042929_Alapon[1].jpg" width="350" height="auto">
+<img src="conversation[1].jpg" width="350" height="auto">
+<img src="profile[1].jpg" width="350" height="auto">
+<img src="active[1].jpg" width="350" height="auto">
 
 </div>
